@@ -1,3 +1,4 @@
+
 import "./App.css";
 import { useState, useEffect } from "react";
 
@@ -18,28 +19,38 @@ import {
 import { getDestinations } from "./services/api";
 import AuthModal from "./AuthModal";
 import MyTrips from "./MyTrips";
-import "./App.css";
-
 
 /* =========================
    NAVBAR
 ========================= */
 
 function Navbar({ onOpenAuth, user, onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
   return (
     <nav className="navbar">
-      <a href="#" className="logo">
+
+      <a href="#" className="logo" onClick={closeMenu}>
         tripora<span>.</span>
       </a>
 
+      {/* Desktop Navigation */}
       <div className="nav-links">
-        <a href="#">Home</a>
-        <a href="#destinations">Explore</a>
-        <a href="#why-us">About</a>
-        {user && <a href="#my-trips">My Trips</a>}
+        <a href="#" onClick={closeMenu}>Home</a>
+        <a href="#destinations" onClick={closeMenu}>Explore</a>
+        <a href="#why-us" onClick={closeMenu}>About</a>
+        {user && (
+          <a href="#my-trips" onClick={closeMenu}>My Trips</a>
+        )}
       </div>
 
+      {/* Desktop Actions */}
       <div className="nav-actions">
+
         <button className="icon-btn" aria-label="Favorites">
           <Heart size={19} />
         </button>
@@ -75,13 +86,75 @@ function Navbar({ onOpenAuth, user, onLogout }) {
         )}
       </div>
 
-      <button className="mobile-menu" aria-label="Menu">
-        <Menu size={24} />
+      {/* Mobile Hamburger Button */}
+      <button
+        className="mobile-menu"
+        aria-label="Toggle navigation menu"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((previous) => !previous)}
+      >
+        {menuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
+
+      {/* Mobile Navigation Menu */}
+      {menuOpen && (
+        <div className="mobile-menu-panel">
+
+          <a href="#" onClick={closeMenu}>
+            Home
+          </a>
+
+          <a href="#destinations" onClick={closeMenu}>
+            Explore Destinations
+          </a>
+
+          <a href="#why-us" onClick={closeMenu}>
+            About Tripora
+          </a>
+
+          {user ? (
+            <>
+              <a href="#my-trips" onClick={closeMenu}>
+                My Trips
+              </a>
+
+              <button
+                onClick={() => {
+                  onLogout();
+                  closeMenu();
+                }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  closeMenu();
+                  onOpenAuth("login");
+                }}
+              >
+                Login
+              </button>
+
+              <button
+                onClick={() => {
+                  closeMenu();
+                  onOpenAuth("register");
+                }}
+              >
+                Get Started
+              </button>
+            </>
+          )}
+
+        </div>
+      )}
+
     </nav>
   );
 }
-
 
 /* =========================
    HERO
@@ -90,7 +163,9 @@ function Navbar({ onOpenAuth, user, onLogout }) {
 function Hero() {
   return (
     <section className="hero">
+
       <div className="hero-content">
+
         <span className="hero-tag">
           <Compass size={15} />
           YOUR NEXT ADVENTURE STARTS HERE
@@ -112,6 +187,7 @@ function Hero() {
         </a>
 
         <div className="hero-stats">
+
           <div>
             <h3>50+</h3>
             <span>Destinations</span>
@@ -126,10 +202,12 @@ function Hero() {
             <h3>4.9</h3>
             <span>Average Rating</span>
           </div>
+
         </div>
       </div>
 
       <div className="hero-image">
+
         <img
           src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200"
           alt="Beautiful mountain landscape"
@@ -143,11 +221,12 @@ function Hero() {
             <span>Explore somewhere new</span>
           </div>
         </div>
+
       </div>
+
     </section>
   );
 }
-
 
 /* =========================
    DESTINATIONS
@@ -230,6 +309,7 @@ function Destinations() {
             <div className="destination-card" key={destination._id}>
 
               <div className="destination-image">
+
                 <img
                   src={
                     destination.imageUrl ||
@@ -243,9 +323,13 @@ function Destinations() {
                   4.9
                 </span>
 
-                <button className="favorite-btn" aria-label="Add to favorites">
+                <button
+                  className="favorite-btn"
+                  aria-label="Add to favorites"
+                >
                   <Heart size={18} />
                 </button>
+
               </div>
 
               <div className="destination-info">
@@ -263,7 +347,9 @@ function Destinations() {
                   <span>Budget per day</span>
 
                   <strong>
-                    ₹{Number(destination.budgetPerDay || 0).toLocaleString("en-IN")}
+                    ₹{Number(
+                      destination.budgetPerDay || 0
+                    ).toLocaleString("en-IN")}
                   </strong>
                 </div>
 
@@ -292,6 +378,7 @@ function Destinations() {
             className="destination-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
+
             <button
               className="modal-close"
               onClick={() => setSelectedDestination(null)}
@@ -300,7 +387,9 @@ function Destinations() {
               <X size={22} />
             </button>
 
-            <span className="section-tag">DESTINATION DETAILS</span>
+            <span className="section-tag">
+              DESTINATION DETAILS
+            </span>
 
             <h2>{selectedDestination.name}</h2>
 
@@ -330,6 +419,7 @@ function Destinations() {
             >
               Close Details
             </button>
+
           </div>
         </div>
       )}
@@ -337,7 +427,6 @@ function Destinations() {
     </section>
   );
 }
-
 
 /* =========================
    WHY TRIPORA
@@ -405,7 +494,6 @@ function WhyTripora() {
   );
 }
 
-
 /* =========================
    FOOTER
 ========================= */
@@ -437,6 +525,7 @@ function Footer() {
 
           <div>
             <h4>My Account</h4>
+
             <a
               href="#"
               onClick={(e) => {
@@ -475,7 +564,6 @@ function Footer() {
     </footer>
   );
 }
-
 
 /* =========================
    MAIN APP
@@ -539,6 +627,7 @@ function App() {
 
       {showAuth && (
         <AuthModal
+          key={authMode}
           initialMode={authMode}
           onClose={() => setShowAuth(false)}
           onLoginSuccess={setUser}
